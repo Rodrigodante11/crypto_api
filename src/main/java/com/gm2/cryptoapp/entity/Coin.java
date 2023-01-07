@@ -3,7 +3,7 @@ package com.gm2.cryptoapp.entity;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 
-public class coin {
+public class Coin {
 
     private int id;
     private String name;
