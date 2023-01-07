@@ -1,8 +1,7 @@
 package com.gm2.cryptoapp.repository;
 
-import com.gm2.cryptoapp.dto.CoinDTO;
+import com.gm2.cryptoapp.dto.CoinTransationDTO;
 import com.gm2.cryptoapp.entity.Coin;
-import jdk.jfr.Enabled;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -19,6 +18,10 @@ public class CoinRepository {
     private static String SELECT_ALL =  "select name, sum(quantity) as quantity from coin group by name";
 
     private static String SELECT_BY_NAME = "select * from coin where name = ?";
+
+    private static String DELETE = "delete from coin where id = ?";
+
+    private static  String UPDATE = "update coin set name = ?, price = ?, quantity = ? where id = ?";
 
     private JdbcTemplate jdbcTemplate;
 
@@ -39,11 +42,22 @@ public class CoinRepository {
         return coin;
     }
 
-    public List<CoinDTO> getAll(){
-        return jdbcTemplate.query(SELECT_ALL, new RowMapper<CoinDTO>() {
+    public Coin update(Coin coin){
+        Object[] attr = new Object[]{
+                coin.getName(),
+                coin.getPrice(),
+                coin.getQuantity(),
+                coin.getId()
+        };
+        jdbcTemplate.update(UPDATE, attr);
+        return coin;
+    }
+
+    public List<CoinTransationDTO> getAll(){
+        return jdbcTemplate.query(SELECT_ALL, new RowMapper<CoinTransationDTO>() {
             @Override
-            public CoinDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
-                CoinDTO coin = new CoinDTO();
+            public CoinTransationDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
+                CoinTransationDTO coin = new CoinTransationDTO();
                 coin.setName(rs.getString("name"));
                 coin.setQuantity(rs.getBigDecimal("quantity"));
 
@@ -69,6 +83,10 @@ public class CoinRepository {
 
             }
         }, attr);
+    }
+
+    public int remove(int id){
+        return jdbcTemplate.update(DELETE, id);
     }
 
 
